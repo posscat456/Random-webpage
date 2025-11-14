@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>随机程序网页</title>
+
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            flex: 1;
+            margin: 0 8px;
+        }
+
+        .btn-time {
+            background: #3498db;
+            color: white;
+        }
+        .btn-time:hover {
+            background: #2980b9;
+        }
+
+        .btn-number {
+            background: #27ae60;
+            color: white;
+        }
+        .btn-number:hover {
+            background: #1e8449;
+        }
+
+        .panel {
+            background: #ffffffcc;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+            display: none;
+            box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-size: 15px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            border: 1px solid #bbb;
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 18px;
+            background: #8e44ad;
+            color: white;
+            border-radius: 10px;
+        }
+        .start-btn:hover {
+            background: #732d91;
+        }
+
+        .result {
+            margin-top: 25px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>随机程序网页</h1>
+
+        <div class="btn-group">
+            <button class="btn-time" onclick="showPanel('time')">时间</button>
+            <button class="btn-number" onclick="showPanel('number')">数字</button>
+        </div>
+
+        <!-- 时间随机器 -->
+        <div id="time-panel" class="panel">
+            <label>开始时间（HH:MM:SS）</label>
+            <input type="time" id="startTime" step="1">
+
+            <label>结束时间（HH:MM:SS）</label>
+            <input type="time" id="endTime" step="1">
+
+            <button class="start-btn" onclick="generateTime()">Start</button>
+        </div>
+
+        <!-- 数字随机器 -->
+        <div id="number-panel" class="panel">
+            <label>最小数字</label>
+            <input type="number" id="minNum">
+
+            <label>最大数字</label>
+            <input type="number" id="maxNum">
+
+            <button class="start-btn" onclick="generateNumber()">Start</button>
+        </div>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function showPanel(type) {
+            document.getElementById("time-panel").style.display = "none";
+            document.getElementById("number-panel").style.display = "none";
+            document.getElementById("result").innerHTML = "";
+
+            if (type === "time") {
+                document.getElementById("time-panel").style.display = "block";
+            } else {
+                document.getElementById("number-panel").style.display = "block";
+            }
+        }
+
+        function toSeconds(hms) {
+            const [h, m, s] = hms.split(":").map(Number);
+            return h * 3600 + m * 60 + s;
+        }
+
+        function fromSeconds(sec) {
+            const h = Math.floor(sec / 3600);
+            const m = Math.floor((sec % 3600) / 60);
+            const s = sec % 60;
+            return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+        }
+
+        function generateTime() {
+            const start = document.getElementById("startTime").value;
+            const end = document.getElementById("endTime").value;
+
+            if (!start || !end) {
+                alert("请输入完整的开始与结束时间");
+                return;
+            }
+
+            const startSec = toSeconds(start);
+            const endSec = toSeconds(end);
+
+            if (endSec <= startSec) {
+                alert("结束时间必须大于开始时间");
+                return;
+            }
+
+            const randomSec = Math.floor(Math.random() * (endSec - startSec + 1)) + startSec;
+            document.getElementById("result").innerHTML = fromSeconds(randomSec);
+        }
+
+        function generateNumber() {
+            const min = parseInt(document.getElementById("minNum").value);
+            const max = parseInt(document.getElementById("maxNum").value);
+
+            if (isNaN(min) || isNaN(max)) {
+                alert("请输入数字范围");
+                return;
+            }
+
+            if (max < min) {
+                alert("最大数字必须大于最小数字");
+                return;
+            }
+
+            const randomNum = Math.floor(Math.random() * (max - min + 1)) + min;
+            document.getElementById("result").innerHTML = randomNum;
+        }
+    </script>
+</body>
+</html>
